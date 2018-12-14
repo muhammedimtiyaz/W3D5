@@ -10,17 +10,25 @@ class AssocOptions
   )
 
   def model_class
-    # ...
+    
   end
 
   def table_name
-    # ...
+    self.class.to_s.tableize
   end
 end
 
 class BelongsToOptions < AssocOptions
   def initialize(name, options = {})
-    # ...
+    default = {
+      :primary_key => :id,
+      :class_name => name.to_s.camelcase
+      :foreign_key => "#{name}_id".to_sym
+    }
+
+    default.keys.each do |key|
+      self.send("#{key}=", options[key]) || default[key]
+    end
   end
 end
 
@@ -46,5 +54,5 @@ module Associatable
 end
 
 class SQLObject
-  # Mixin Associatable here...
+  extend Associatable
 end
